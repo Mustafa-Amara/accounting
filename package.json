@@ -1,0 +1,44 @@
+{
+  "name": "invoice-debt-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "نظام إدارة الفواتير والديون بالعربية (RTL) — Next.js + Tailwind + Prisma + ExcelJS",
+  "scripts": {
+    "dev": "node scripts/backup-db.mjs && next dev --hostname localhost --port 3000",
+    "build": "prisma generate && next build",
+    "start": "node scripts/backup-db.mjs && next start --hostname localhost --port 3000",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:backup": "node scripts/backup-db.mjs",
+    "db:restore": "node scripts/restore-db.mjs",
+    "db:watch": "node scripts/watch-db-backup.mjs",
+    "service:start": "powershell -ExecutionPolicy Bypass -File scripts/start-local-service.ps1",
+    "service:stop": "powershell -ExecutionPolicy Bypass -File scripts/stop-local-service.ps1",
+    "local:ip": "powershell -ExecutionPolicy Bypass -File scripts/get-local-ip.ps1",
+    "autostart:setup": "powershell -ExecutionPolicy Bypass -Command \"$s=(New-Object -ComObject WScript.Shell).CreateShortcut('%USERPROFILE%\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\invoice-app.lnk'); $s.TargetPath='C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe'; $s.Arguments='-WindowStyle Hidden -ExecutionPolicy Bypass -Command \"cd /d C:\\Users\\DELL\\Desktop\\invoice-app; npm run start\"'; $s.WorkingDirectory='C:\\Users\\DELL\\Desktop\\invoice-app'; $s.Save(); Write-Host 'Startup shortcut created.'\""
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0",
+    "better-sqlite3": "^11.3.0",
+    "exceljs": "^4.4.0",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8",
+    "zustand": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "prisma": "^5.18.0",
+    "tailwindcss": "^3.4.7",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  }
+}

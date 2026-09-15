@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        Int       @id @default(autoincrement())
+  name      String
+  phone     String    @default("")
+  address   String    @default("")
+  notes     String    @default("")
+  createdAt DateTime  @default(now())
+  invoices  Invoice[]
+  payments  Payment[]
+}
+
+model Product {
+  id       Int     @id @default(autoincrement())
+  nameAr   String
+  category String  @default("عام")
+  price    Float   @default(0)
+  unit     String  @default("قطعة")
+  stock    Float   @default(0)
+  items    InvoiceItem[]
+}
+
+model Supplier {
+  id        Int               @id @default(autoincrement())
+  name      String
+  phone     String            @default("")
+  address   String            @default("")
+  notes     String            @default("")
+  createdAt DateTime          @default(now())
+  purchases Purchase[]
+  payments  SupplierPayment[]
+}
+
+model Invoice {
+  id        Int           @id @default(autoincrement())
+  number    String        @unique
+  clientId  Int
+  client    Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date      DateTime      @default(now())
+  subtotal  Float         @default(0)
+  discount  Float         @default(0)
+  tax       Float         @default(0)
+  total     Float         @default(0)
+  paid      Float         @default(0)
+  remaining Float         @default(0)
+  status    String        @default("آجلة") // مدفوعة | جزئية | آجلة
+  notes     String        @default("")
+  createdAt DateTime      @default(now())
+  items     InvoiceItem[]
+  payments  Payment[]
+}
+
+model InvoiceItem {
+  id        Int      @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name      String
+  qty       Float    @default(1)
+  price     Float    @default(0)
+  total     Float    @default(0)
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  invoiceId Int?
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  amount    Float
+  date      DateTime @default(now())
+  method    String   @default("نقدي")
+  notes     String   @default("")
+}
+
+model Purchase {
+  id         Int               @id @default(autoincrement())
+  number     String            @unique
+  supplierId Int
+  supplier   Supplier          @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  date       DateTime          @default(now())
+  subtotal   Float             @default(0)
+  discount   Float             @default(0)
+  tax        Float             @default(0)
+  total      Float             @default(0)
+  paid       Float             @default(0)
+  remaining  Float             @default(0)
+  status     String            @default("آجلة")
+  notes      String            @default("")
+  createdAt  DateTime          @default(now())
+  payments   SupplierPayment[]
+}
+
+model SupplierPayment {
+  id         Int      @id @default(autoincrement())
+  supplierId Int
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  purchaseId Int?
+  purchase   Purchase? @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
+  amount     Float
+  date       DateTime @default(now())
+  method     String   @default("نقدي")
+  notes      String   @default("")
+}
